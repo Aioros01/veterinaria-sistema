@@ -1,0 +1,1 @@
+{"version":3,"file":"AuditableEntity.d.ts","sourceRoot":"","sources":["../../src/entities/AuditableEntity.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,UAAU,EAAE,MAAM,cAAc,CAAC;AAE1C,8BAAsB,eAAgB,SAAQ,UAAU;IAEtD,SAAS,EAAE,MAAM,CAAC;IAGlB,SAAS,EAAE,MAAM,CAAC;CACnB"}

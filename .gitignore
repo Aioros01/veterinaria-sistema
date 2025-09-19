@@ -1,0 +1,12 @@
+# Solo ignorar node_modules para no hacer el repo muy pesado
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporales del sistema
+.DS_Store
+Thumbs.db
+
+# IMPORTANTE: NO ignoramos .env para la migración
+# Lo eliminarás manualmente después de clonar

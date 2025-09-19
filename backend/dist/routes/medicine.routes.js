@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const MedicineController_1 = require("../controllers/MedicineController");
+const auth_1 = require("../middleware/auth");
+const User_1 = require("../entities/User");
+const errorHandler_1 = require("../middleware/errorHandler");
+const router = (0, express_1.Router)();
+const medicineController = new MedicineController_1.MedicineController();
+router.use(auth_1.AuthMiddleware.authenticate);
+router.get('/', (0, errorHandler_1.asyncHandler)(medicineController.getAll.bind(medicineController)));
+router.get('/low-stock', auth_1.AuthMiddleware.authorize(User_1.UserRole.ADMIN, User_1.UserRole.VETERINARIAN), (0, errorHandler_1.asyncHandler)(medicineController.getLowStock.bind(medicineController)));
+router.get('/expiring', auth_1.AuthMiddleware.authorize(User_1.UserRole.ADMIN, User_1.UserRole.VETERINARIAN), (0, errorHandler_1.asyncHandler)(medicineController.getExpiring.bind(medicineController)));
+router.get('/:id', (0, errorHandler_1.asyncHandler)(medicineController.getById.bind(medicineController)));
+router.post('/', auth_1.AuthMiddleware.authorize(User_1.UserRole.ADMIN, User_1.UserRole.VETERINARIAN), (0, errorHandler_1.asyncHandler)(medicineController.create.bind(medicineController)));
+router.put('/:id', auth_1.AuthMiddleware.authorize(User_1.UserRole.ADMIN, User_1.UserRole.VETERINARIAN), (0, errorHandler_1.asyncHandler)(medicineController.update.bind(medicineController)));
+router.patch('/:id/stock', auth_1.AuthMiddleware.authorize(User_1.UserRole.ADMIN, User_1.UserRole.VETERINARIAN), (0, errorHandler_1.asyncHandler)(medicineController.updateStock.bind(medicineController)));
+router.delete('/:id', auth_1.AuthMiddleware.authorize(User_1.UserRole.ADMIN, User_1.UserRole.VETERINARIAN), (0, errorHandler_1.asyncHandler)(medicineController.delete.bind(medicineController)));
+exports.default = router;
+//# sourceMappingURL=medicine.routes.js.map
