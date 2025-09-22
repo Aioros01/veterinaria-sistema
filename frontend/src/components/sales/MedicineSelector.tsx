@@ -62,6 +62,28 @@ const MedicineSelector: React.FC<MedicineSelectorProps> = ({
   const [stockWarning, setStockWarning] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Definir checkStockAndUpdatePurchaseOptions antes del useEffect
+  const checkStockAndUpdatePurchaseOptions = React.useCallback((medicine: Medicine, requestedQuantity: number) => {
+    if (medicine.currentStock < requestedQuantity) {
+      if (medicine.currentStock === 0) {
+        setPurchaseLocation('external');
+        setStockWarning('Sin stock disponible en clínica. Debe comprar en farmacia externa.');
+      } else {
+        setPurchaseLocation('split');
+        setQuantityInClinic(medicine.currentStock);
+        setQuantityExternal(requestedQuantity - medicine.currentStock);
+        setStockWarning(`Stock limitado: Solo ${medicine.currentStock} unidades disponibles en clínica.`);
+      }
+    } else {
+      setPurchaseLocation('in_clinic');
+      setStockWarning('');
+    }
+
+    if (medicine.currentStock <= medicine.minimumStock) {
+      setStockWarning(prev => prev ? `${prev} Stock mínimo alcanzado.` : 'Stock mínimo alcanzado.');
+    }
+  }, []);
+
   useEffect(() => {
     if (saleType === 'direct') {
       loadMedicines();
@@ -71,7 +93,7 @@ const MedicineSelector: React.FC<MedicineSelectorProps> = ({
       setQuantity(prescription.quantity || 1);
       checkStockAndUpdatePurchaseOptions(prescription.medicine, prescription.quantity || 1);
     }
-  }, [prescription, saleType]);
+  }, [prescription, saleType, checkStockAndUpdatePurchaseOptions]);
 
   useEffect(() => {
     // Actualizar los datos de venta cuando cambian los valores
@@ -120,29 +142,6 @@ const MedicineSelector: React.FC<MedicineSelectorProps> = ({
     }
   };
 
-  const checkStockAndUpdatePurchaseOptions = (medicine: Medicine, requestedQuantity: number) => {
-    const stock = medicine.currentStock;
-
-    if (stock >= requestedQuantity) {
-      // Suficiente stock para compra completa en clínica
-      setStockWarning('');
-      setPurchaseLocation('in_clinic');
-      setQuantityInClinic(0);
-      setQuantityExternal(0);
-    } else if (stock > 0) {
-      // Stock parcial disponible
-      setStockWarning(`Stock insuficiente para compra completa. Disponible en clínica: ${stock} unidades. Se sugiere compra parcial.`);
-      setPurchaseLocation('split');
-      setQuantityInClinic(stock);
-      setQuantityExternal(requestedQuantity - stock);
-    } else {
-      // Sin stock en clínica
-      setStockWarning('Sin stock en clínica. La compra debe ser externa.');
-      setPurchaseLocation('external');
-      setQuantityInClinic(0);
-      setQuantityExternal(requestedQuantity);
-    }
-  };
 
   const handleMedicineChange = (medicineId: string) => {
     const medicine = medicines.find(m => m.id === medicineId);

@@ -233,7 +233,7 @@ export const ConsentUpload: React.FC<ConsentUploadProps> = ({
         <Button
           onClick={handleUpload}
           variant="contained"
-          disabled={!signedPdf || !idDocument || uploading}
+          disabled={!signedPdf || uploading}
           startIcon={uploading ? null : <CloudUpload />}
         >
           {uploading ? 'Cargando...' : 'Cargar Documentos'}

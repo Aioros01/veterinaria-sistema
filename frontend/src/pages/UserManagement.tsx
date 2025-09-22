@@ -91,9 +91,27 @@ export default function UserManagement() {
     loadUsers();
   }, []);
 
+  const filterUsers = React.useCallback(() => {
+    let filtered = [...users];
+
+    if (searchDocument.trim() !== '') {
+      filtered = filtered.filter(user =>
+        user.documentNumber?.toLowerCase().includes(searchDocument.toLowerCase())
+      );
+    }
+
+    if (searchName.trim() !== '') {
+      filtered = filtered.filter(user =>
+        (`${user.firstName} ${user.lastName}`).toLowerCase().includes(searchName.toLowerCase())
+      );
+    }
+
+    setFilteredUsers(filtered);
+  }, [users, searchDocument, searchName]);
+
   useEffect(() => {
     filterUsers();
-  }, [users, searchDocument, searchName]);
+  }, [filterUsers]);
 
   const loadUsers = async () => {
     try {
@@ -110,24 +128,6 @@ export default function UserManagement() {
     }
   };
 
-  const filterUsers = () => {
-    let filtered = [...users];
-    
-    if (searchDocument) {
-      filtered = filtered.filter(user => 
-        user.documentNumber?.toLowerCase().includes(searchDocument.toLowerCase())
-      );
-    }
-    
-    if (searchName) {
-      filtered = filtered.filter(user => {
-        const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
-        return fullName.includes(searchName.toLowerCase());
-      });
-    }
-    
-    setFilteredUsers(filtered);
-  };
 
   const handleSearchByDocument = async () => {
     if (!searchDocument) {

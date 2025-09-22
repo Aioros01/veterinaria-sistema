@@ -57,24 +57,25 @@ const DocumentHistory: React.FC<DocumentHistoryProps> = ({ open, onClose, consen
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (open && consentId) {
-      loadHistory();
-    }
+    const fetchHistory = async () => {
+      if (open && consentId) {
+        setLoading(true);
+        setError(null);
+        try {
+          const response = await api.get(`/consents/${consentId}/document-history`);
+          setHistory(response.data.history);
+        } catch (err: any) {
+          setError('Error al cargar el historial');
+          console.error('Error loading history:', err);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchHistory();
   }, [open, consentId]);
 
-  const loadHistory = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await api.get(`/consents/${consentId}/document-history`);
-      setHistory(response.data.history);
-    } catch (err: any) {
-      setError('Error al cargar el historial');
-      console.error('Error loading history:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const formatFileSize = (bytes?: number) => {
     if (!bytes) return 'N/A';

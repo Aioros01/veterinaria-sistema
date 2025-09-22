@@ -77,7 +77,7 @@ const ClientPetSelector: React.FC<ClientPetSelectorProps> = ({
       setPets([]);
       setSelectedPet(null);
     }
-  }, [selectedClient]);
+  }, [selectedClient, setSelectedPet, loadPetsByOwner]);
 
   const loadClients = async () => {
     try {
@@ -121,7 +121,7 @@ const ClientPetSelector: React.FC<ClientPetSelectorProps> = ({
     }
   };
 
-  const loadPetsByOwner = async (ownerId: string) => {
+  const loadPetsByOwner = React.useCallback(async (ownerId: string) => {
     try {
       setLoadingPets(true);
       const response = await petService.getByOwner(ownerId);
@@ -133,7 +133,7 @@ const ClientPetSelector: React.FC<ClientPetSelectorProps> = ({
     } finally {
       setLoadingPets(false);
     }
-  };
+  }, []);
 
   const filteredClients = clients.filter(client => {
     const fullName = `${client.firstName || ''} ${client.lastName || ''}`.toLowerCase();

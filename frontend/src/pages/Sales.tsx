@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Paper,
@@ -20,7 +20,7 @@ import ClientPetSelector, { Client, Pet } from '../components/sales/ClientPetSel
 import PrescriptionSelector from '../components/sales/PrescriptionSelector';
 import MedicineSelector from '../components/sales/MedicineSelector';
 import SalesSummary from '../components/sales/SalesSummary';
-import { userService, petService, prescriptionService, medicineSaleService } from '../services/api';
+import { medicineSaleService } from '../services/api';
 
 interface Prescription {
   id: string;
