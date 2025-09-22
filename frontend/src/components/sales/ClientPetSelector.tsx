@@ -66,6 +66,20 @@ const ClientPetSelector: React.FC<ClientPetSelectorProps> = ({
   const [loadingPets, setLoadingPets] = useState(false);
   const [error, setError] = useState<string>('');
 
+  const loadPetsByOwner = React.useCallback(async (ownerId: string) => {
+    try {
+      setLoadingPets(true);
+      const response = await petService.getByOwner(ownerId);
+      const petsData = response.data || response;
+      setPets(Array.isArray(petsData) ? petsData : []);
+    } catch (error) {
+      console.error('Error loading pets:', error);
+      setPets([]);
+    } finally {
+      setLoadingPets(false);
+    }
+  }, []);
+
   useEffect(() => {
     loadClients();
   }, []);
@@ -120,20 +134,6 @@ const ClientPetSelector: React.FC<ClientPetSelectorProps> = ({
       setLoadingClients(false);
     }
   };
-
-  const loadPetsByOwner = React.useCallback(async (ownerId: string) => {
-    try {
-      setLoadingPets(true);
-      const response = await petService.getByOwner(ownerId);
-      const petsData = response.data || response;
-      setPets(Array.isArray(petsData) ? petsData : []);
-    } catch (error) {
-      console.error('Error loading pets:', error);
-      setPets([]);
-    } finally {
-      setLoadingPets(false);
-    }
-  }, []);
 
   const filteredClients = clients.filter(client => {
     const fullName = `${client.firstName || ''} ${client.lastName || ''}`.toLowerCase();
