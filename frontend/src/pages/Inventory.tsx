@@ -32,7 +32,6 @@ import {
   Search
 } from '@mui/icons-material';
 import { medicineService } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
 
 interface Medicine {
   id: string;
@@ -52,7 +51,6 @@ interface Medicine {
 }
 
 const Inventory: React.FC = () => {
-  const { user } = useAuth();
   const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [filteredMedicines, setFilteredMedicines] = useState<Medicine[]>([]);
   const [lowStockMedicines, setLowStockMedicines] = useState<Medicine[]>([]);
@@ -240,24 +238,6 @@ const Inventory: React.FC = () => {
           severity: 'error'
         });
       }
-    }
-  };
-
-  const handleUpdateStock = async (id: string, newStock: number) => {
-    try {
-      await medicineService.updateStock(id, { quantity: newStock });
-      setSnackbar({
-        open: true,
-        message: 'Stock actualizado exitosamente',
-        severity: 'success'
-      });
-      loadInventory();
-    } catch (error: any) {
-      setSnackbar({
-        open: true,
-        message: error.response?.data?.message || 'Error al actualizar el stock',
-        severity: 'error'
-      });
     }
   };
 
