@@ -103,7 +103,7 @@ export class PetController {
     // Solo admin y veterinario pueden ver mascotas de otros dueños
     if (req.user!.role !== 'admin' && req.user!.role !== 'veterinarian') {
       if (req.user!.id !== ownerId) {
-        throw new AppError('No autorizado para ver mascotas de otros usuarios', 403);
+        throw new AppError(403, 'No autorizado para ver mascotas de otros usuarios');
       }
     }
 

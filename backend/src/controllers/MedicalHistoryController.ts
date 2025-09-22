@@ -50,7 +50,7 @@ export class MedicalHistoryController {
     const history = await this.medicalHistoryRepository.findOne({ where: { id: req.params.id } });
     if (!history) throw new AppError(404, 'Medical history not found');
     
-    const files = req.files as Express.Multer.File[];
+    const files = req.files as any[];
     history.attachments = files.map(f => `/uploads/medical/${f.filename}`);
     await this.medicalHistoryRepository.save(history);
     

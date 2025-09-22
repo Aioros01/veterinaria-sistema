@@ -4,6 +4,7 @@ import { Consent, ConsentStatus } from '../entities/Consent';
 import { ConsentDocumentHistory, DocumentType } from '../entities/ConsentDocumentHistory';
 import { AuthRequest } from '../middleware/auth';
 import { AppError } from '../middleware/errorHandler';
+import { UserRole } from '../entities/User';
 import multer from 'multer';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -221,7 +222,7 @@ export class ConsentController {
       }
 
       // Verificar que el usuario es el dueño de la mascota
-      if (req.user!.role === 'cliente' && consent.pet.ownerId !== req.user!.id) {
+      if (req.user!.role === UserRole.CLIENT && consent.pet.ownerId !== req.user!.id) {
         throw new AppError(403, 'No tienes permiso para firmar este consentimiento');
       }
 
@@ -261,7 +262,7 @@ export class ConsentController {
       }
 
       // Verificar permisos
-      if (req.user!.role === 'cliente' && consent.pet.ownerId !== req.user!.id) {
+      if (req.user!.role === UserRole.CLIENT && consent.pet.ownerId !== req.user!.id) {
         throw new AppError(403, 'No tienes permiso para rechazar este consentimiento');
       }
 
@@ -296,7 +297,7 @@ export class ConsentController {
       }
 
       // Verificar permisos
-      if (req.user!.role === 'cliente' && consent.pet.ownerId !== req.user!.id) {
+      if (req.user!.role === UserRole.CLIENT && consent.pet.ownerId !== req.user!.id) {
         throw new AppError(403, 'No tienes permiso para ver este consentimiento');
       }
 
@@ -340,7 +341,7 @@ export class ConsentController {
       }
       
       // Verificar permisos
-      if (req.user!.role === 'cliente' && consent.pet.ownerId !== req.user!.id) {
+      if (req.user!.role === UserRole.CLIENT && consent.pet.ownerId !== req.user!.id) {
         throw new AppError(403, 'No tienes permiso para ver este historial');
       }
       
@@ -377,7 +378,7 @@ export class ConsentController {
       }
 
       // Verificar permisos
-      if (req.user!.role === 'cliente' && consent.pet.ownerId !== req.user!.id) {
+      if (req.user!.role === UserRole.CLIENT && consent.pet.ownerId !== req.user!.id) {
         throw new AppError(403, 'No tienes permiso para actualizar este consentimiento');
       }
 

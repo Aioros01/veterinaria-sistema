@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { authMiddleware } from '../middleware/auth';
+import { AuthMiddleware } from '../middleware/auth';
 import { AppDataSource } from '../config/database';
 import { User } from '../entities/User';
 import { Pet } from '../entities/Pet';
