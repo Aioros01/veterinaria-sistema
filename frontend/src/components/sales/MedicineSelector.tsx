@@ -126,7 +126,7 @@ const MedicineSelector: React.FC<MedicineSelectorProps> = ({
     } else {
       onSaleDataChange(null);
     }
-  }, [selectedMedicine, quantity, purchaseLocation, quantityInClinic, quantityExternal, discountPercentage, notes, externalPharmacy, prescription]);
+  }, [selectedMedicine, quantity, purchaseLocation, quantityInClinic, quantityExternal, discountPercentage, notes, externalPharmacy, prescription, onSaleDataChange]);
 
   const loadMedicines = async () => {
     try {

@@ -20,7 +20,6 @@ import {
   DialogContent,
   DialogActions,
   Divider,
-  Chip,
   InputAdornment
 } from '@mui/material';
 import {
@@ -29,12 +28,10 @@ import {
   Pets as PetsIcon,
   EventNote as EventNoteIcon,
   LocalHospital as HospitalIcon,
-  Description as ConsentIcon,
-  Medication as MedicationIcon,
   Check as CheckIcon,
   Add as AddIcon
 } from '@mui/icons-material';
-import { userService, petService, appointmentService } from '../services/api';
+import { userService, petService } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
 interface Client {
@@ -110,37 +107,27 @@ const QuickAttention: React.FC = () => {
     loadAllClients();
   }, []);
 
-  // Búsqueda en tiempo real
-  useEffect(() => {
-    if (searchTerm.length > 0) {
-      performSearch();
-    } else {
-      setSearchResults([]);
-      setSearchResult(null);
-      setIsNewClient(false);
-    }
-  }, [searchTerm, searchType]);
-
-  const loadAllClients = async () => {
+  // Función para cargar mascotas del cliente
+  const loadClientPets = React.useCallback(async (clientId: string) => {
     try {
-      const response = await userService.getAll();
+      const response = await petService.getByOwner(clientId);
       const data = response.data || response;
-
-      let users = [];
-      if (Array.isArray(data)) {
-        users = data;
-      } else if (data.users && Array.isArray(data.users)) {
-        users = data.users;
-      }
-
-      const clients = users.filter((u: any) => u.role === 'client' || u.role === 'CLIENT');
-      setAllClients(clients);
+      setPets(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error('Error loading clients:', err);
+      console.error('Error loading pets:', err);
+      setPets([]);
     }
-  };
+  }, []);
 
-  const performSearch = () => {
+  // Función para seleccionar un cliente
+  const selectClient = React.useCallback((client: Client) => {
+    setSearchResult(client);
+    setIsNewClient(false);
+    loadClientPets(client.id);
+  }, [loadClientPets]);
+
+  // Búsqueda en tiempo real
+  const performSearch = React.useCallback(() => {
     if (!searchTerm) {
       setSearchResults([]);
       return;
@@ -171,13 +158,38 @@ const QuickAttention: React.FC = () => {
         setNewClient(prev => ({ ...prev, documentNumber: searchTerm }));
       }
     }
+  }, [searchTerm, searchType, allClients, selectClient]);
+
+  useEffect(() => {
+    if (searchTerm.length > 0) {
+      performSearch();
+    } else {
+      setSearchResults([]);
+      setSearchResult(null);
+      setIsNewClient(false);
+    }
+  }, [searchTerm, searchType, performSearch]);
+
+  const loadAllClients = async () => {
+    try {
+      const response = await userService.getAll();
+      const data = response.data || response;
+
+      let users = [];
+      if (Array.isArray(data)) {
+        users = data;
+      } else if (data.users && Array.isArray(data.users)) {
+        users = data.users;
+      }
+
+      const clients = users.filter((u: any) => u.role === 'client' || u.role === 'CLIENT');
+      setAllClients(clients);
+    } catch (err) {
+      console.error('Error loading clients:', err);
+    }
   };
 
-  const selectClient = (client: Client) => {
-    setSearchResult(client);
-    setIsNewClient(false);
-    loadClientPets(client.id);
-  };
+
 
   const searchClient = async () => {
     setLoading(true);
@@ -232,15 +244,6 @@ const QuickAttention: React.FC = () => {
     }
   };
 
-  const loadClientPets = async (clientId: string) => {
-    try {
-      const response = await petService.getByOwner(clientId);
-      setPets(response.data || []);
-    } catch (error) {
-      console.error('Error loading pets:', error);
-      setPets([]);
-    }
-  };
 
   const createClient = async () => {
     setLoading(true);

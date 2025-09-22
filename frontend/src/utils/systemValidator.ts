@@ -51,7 +51,6 @@ export class SystemValidator {
     
     // Verificar botones de editar/eliminar en cards
     const editButtons = document.querySelectorAll('button:has(.MuiSvgIcon-root)').length;
-    const shouldHaveEditButtons = userRole !== 'cliente';
     
     this.results.push({
       module: 'Mascotas',

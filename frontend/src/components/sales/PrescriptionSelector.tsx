@@ -8,7 +8,6 @@ import {
   Card,
   CardContent,
   Chip,
-  Button,
   CircularProgress,
   Alert
 } from '@mui/material';
@@ -61,13 +60,7 @@ const PrescriptionSelector: React.FC<PrescriptionSelectorProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    if (petId && saleType === 'prescription') {
-      loadPrescriptions();
-    }
-  }, [petId, saleType]);
-
-  const loadPrescriptions = async () => {
+  const loadPrescriptions = React.useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -94,7 +87,14 @@ const PrescriptionSelector: React.FC<PrescriptionSelectorProps> = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [petId]);
+
+  useEffect(() => {
+    if (petId && saleType === 'prescription') {
+      loadPrescriptions();
+    }
+  }, [petId, saleType, loadPrescriptions]);
+
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

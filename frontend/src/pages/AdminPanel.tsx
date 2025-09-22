@@ -24,7 +24,6 @@ import {
 import {
   People,
   Pets,
-  LocalHospital,
   Inventory,
   CalendarMonth,
   AttachMoney,

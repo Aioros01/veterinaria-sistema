@@ -12,11 +12,10 @@ import {
   Stack,
   Chip
 } from '@mui/material';
-import { 
-  CloudUpload, 
-  Description, 
-  CheckCircle,
-  Cancel
+import {
+  CloudUpload,
+  Description,
+  CheckCircle
 } from '@mui/icons-material';
 import api from '../services/api';
 
