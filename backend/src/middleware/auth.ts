@@ -7,6 +7,10 @@ export interface AuthRequest extends Request {
   user?: User;
   file?: Express.Multer.File;
   files?: Express.Multer.File[] | { [fieldname: string]: Express.Multer.File[] };
+  body: any;
+  params: any;
+  query: any;
+  headers: any;
 }
 
 export class AuthMiddleware {
