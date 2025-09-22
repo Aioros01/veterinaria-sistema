@@ -16,7 +16,6 @@ import {
   Card,
   CardContent,
   Divider,
-  Alert,
 } from '@mui/material';
 import { 
   ExpandMore,
@@ -83,30 +82,30 @@ const MedicalHistory: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Cargar historial médico
+        const historyResponse = await medicalHistoryService.getByPet(petId!);
+        setHistories(historyResponse.data.histories);
+
+        // Cargar hospitalizaciones
+        try {
+          const hospResponse = await api.get(`/hospitalizations/pet/${petId}`);
+          setHospitalizations(hospResponse.data.hospitalizations || []);
+        } catch (hospError) {
+          console.error('Error loading hospitalizations:', hospError);
+        }
+      } catch (error) {
+        console.error('Error loading medical history:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     if (petId) {
       loadData();
     }
   }, [petId]);
-
-  const loadData = async () => {
-    try {
-      // Cargar historial médico
-      const historyResponse = await medicalHistoryService.getByPet(petId!);
-      setHistories(historyResponse.data.histories);
-      
-      // Cargar hospitalizaciones
-      try {
-        const hospResponse = await api.get(`/hospitalizations/pet/${petId}`);
-        setHospitalizations(hospResponse.data.hospitalizations || []);
-      } catch (hospError) {
-        console.error('Error loading hospitalizations:', hospError);
-      }
-    } catch (error) {
-      console.error('Error loading medical history:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (loading) {
     return (

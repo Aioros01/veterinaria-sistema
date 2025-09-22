@@ -13,7 +13,6 @@ import {
   TextField,
   MenuItem,
   CircularProgress,
-  Fab,
   InputAdornment,
   Chip,
   Alert,
@@ -80,31 +79,31 @@ const Pets: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const filterPets = () => {
+      if (!searchTerm) {
+        setFilteredPets(pets);
+        return;
+      }
+
+      const filtered = pets.filter(pet => {
+        const searchLower = searchTerm.toLowerCase();
+
+        if (searchType === 'pet') {
+          return pet.name.toLowerCase().includes(searchLower);
+        } else if (searchType === 'owner') {
+          const ownerName = `${pet.owner?.firstName || ''} ${pet.owner?.lastName || ''}`.toLowerCase();
+          return ownerName.includes(searchLower);
+        } else if (searchType === 'cedula') {
+          return pet.owner?.documentNumber?.toLowerCase().includes(searchLower);
+        }
+        return false;
+      });
+
+      setFilteredPets(filtered);
+    };
+
     filterPets();
   }, [searchTerm, searchType, pets]);
-
-  const filterPets = () => {
-    if (!searchTerm) {
-      setFilteredPets(pets);
-      return;
-    }
-
-    const filtered = pets.filter(pet => {
-      const searchLower = searchTerm.toLowerCase();
-
-      if (searchType === 'pet') {
-        return pet.name.toLowerCase().includes(searchLower);
-      } else if (searchType === 'owner') {
-        const ownerName = `${pet.owner?.firstName || ''} ${pet.owner?.lastName || ''}`.toLowerCase();
-        return ownerName.includes(searchLower);
-      } else if (searchType === 'cedula') {
-        return pet.owner?.documentNumber?.toLowerCase().includes(searchLower);
-      }
-      return false;
-    });
-
-    setFilteredPets(filtered);
-  };
 
   const loadPets = async () => {
     try {

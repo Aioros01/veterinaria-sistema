@@ -15,7 +15,6 @@ import {
   DialogContent,
   DialogActions,
   TextField,
-  IconButton,
   Chip,
   FormControl,
   InputLabel,
@@ -25,7 +24,6 @@ import {
   CardContent,
   Snackbar,
   Alert,
-  Tooltip
 } from '@mui/material';
 import Grid from '../components/GridCompat';
 import SignatureCanvas from '../components/SignatureCanvas';
@@ -36,8 +34,6 @@ import {
   Description as DocumentIcon,
   CheckCircle as SignIcon,
   Cancel as RejectIcon,
-  Visibility as ViewIcon,
-  GetApp as DownloadIcon,
   CloudUpload as UploadIcon
 } from '@mui/icons-material';
 import api from '../services/api';

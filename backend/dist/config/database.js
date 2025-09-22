@@ -73,7 +73,8 @@ const config = {
         ConsentDocumentHistory_1.ConsentDocumentHistory
     ],
     synchronize: false, // Desactivado porque las tablas ya existen en CockroachDB
-    logging: process.env.NODE_ENV === 'development'
+    logging: process.env.NODE_ENV === 'development',
+    timeTravelQueries: false // Requerido para CockroachDB
 };
 exports.AppDataSource = new typeorm_1.DataSource(config);
 const initializeDatabase = async () => {

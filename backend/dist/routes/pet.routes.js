@@ -15,6 +15,7 @@ router.use(auth_1.AuthMiddleware.authenticate);
 router.get('/', (0, errorHandler_1.asyncHandler)(petController.getAll.bind(petController)));
 router.post('/', (0, errorHandler_1.asyncHandler)(petController.create.bind(petController)));
 router.get('/my-pets', (0, errorHandler_1.asyncHandler)(petController.getMyPets.bind(petController)));
+router.get('/owner/:ownerId', (0, errorHandler_1.asyncHandler)(petController.getByOwner.bind(petController)));
 router.get('/:id', (0, errorHandler_1.asyncHandler)(petController.getById.bind(petController)));
 router.put('/:id', (0, errorHandler_1.asyncHandler)(petController.update.bind(petController)));
 router.delete('/:id', (0, errorHandler_1.asyncHandler)(petController.delete.bind(petController)));

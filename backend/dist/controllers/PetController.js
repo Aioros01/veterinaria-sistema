@@ -90,6 +90,21 @@ class PetController {
         }
         res.json({ pets });
     }
+    async getByOwner(req, res) {
+        const { ownerId } = req.params;
+        // Solo admin y veterinario pueden ver mascotas de otros dueños
+        if (req.user.role !== 'admin' && req.user.role !== 'veterinarian') {
+            if (req.user.id !== ownerId) {
+                throw new errorHandler_1.AppError(403, 'No autorizado para ver mascotas de otros usuarios');
+            }
+        }
+        const pets = await this.petRepository.find({
+            where: { ownerId, isActive: true },
+            relations: ['owner'],
+            order: { createdAt: 'DESC' }
+        });
+        res.json(pets);
+    }
     async getById(req, res) {
         const { id } = req.params;
         const cacheKey = redis_1.CacheKeys.PET(id);

@@ -5,6 +5,7 @@ export declare class PetController {
     create(req: AuthRequest, res: Response): Promise<void>;
     getAll(req: AuthRequest, res: Response): Promise<void>;
     getMyPets(req: AuthRequest, res: Response): Promise<void>;
+    getByOwner(req: AuthRequest, res: Response): Promise<void>;
     getById(req: AuthRequest, res: Response): Promise<void>;
     update(req: AuthRequest, res: Response): Promise<void>;
     delete(req: AuthRequest, res: Response): Promise<void>;

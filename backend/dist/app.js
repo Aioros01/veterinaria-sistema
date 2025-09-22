@@ -56,6 +56,7 @@ const backup_routes_1 = __importDefault(require("./routes/backup.routes"));
 const hospitalization_routes_1 = __importDefault(require("./routes/hospitalization.routes"));
 const consent_routes_1 = __importDefault(require("./routes/consent.routes"));
 const medicineSales_1 = __importDefault(require("./routes/medicineSales"));
+const adminRoutes_1 = __importDefault(require("./routes/adminRoutes"));
 const cronJobs_1 = require("./utils/cronJobs");
 dotenv.config();
 class App {
@@ -90,6 +91,7 @@ class App {
         this.app.use('/api/hospitalizations', hospitalization_routes_1.default);
         this.app.use('/api/consents', consent_routes_1.default);
         this.app.use('/api/medicine-sales', medicineSales_1.default);
+        this.app.use('/api/admin', adminRoutes_1.default);
     }
     setupErrorHandling() {
         this.app.use(errorHandler_1.notFound);

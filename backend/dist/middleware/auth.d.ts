@@ -2,10 +2,14 @@ import { Request, Response, NextFunction } from 'express';
 import { User, UserRole } from '../entities/User';
 export interface AuthRequest extends Request {
     user?: User;
-    file?: Express.Multer.File;
-    files?: Express.Multer.File[] | {
-        [fieldname: string]: Express.Multer.File[];
+    file?: any;
+    files?: any[] | {
+        [fieldname: string]: any[];
     };
+    body: any;
+    params: any;
+    query: any;
+    headers: any;
 }
 export declare class AuthMiddleware {
     static authenticate(req: AuthRequest, res: Response, next: NextFunction): Promise<void>;

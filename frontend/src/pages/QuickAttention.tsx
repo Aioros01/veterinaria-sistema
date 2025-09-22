@@ -191,58 +191,6 @@ const QuickAttention: React.FC = () => {
 
 
 
-  const searchClient = async () => {
-    setLoading(true);
-    setError('');
-    setSearchResult(null);
-
-    try {
-      const response = await userService.getAll();
-      const data = response.data || response;
-
-      // Manejar diferentes estructuras de respuesta
-      let users = [];
-      if (Array.isArray(data)) {
-        users = data;
-      } else if (data.users && Array.isArray(data.users)) {
-        users = data.users;
-      } else if (data.data && Array.isArray(data.data)) {
-        users = data.data;
-      }
-
-      let found = null;
-      if (searchType === 'cedula') {
-        found = users.find((u: any) => u.documentNumber === searchTerm && u.role === 'client');
-      } else {
-        const searchLower = searchTerm.toLowerCase();
-        found = users.find((u: any) =>
-          u.role === 'client' &&
-          (`${u.firstName || ''} ${u.lastName || ''}`.toLowerCase().includes(searchLower))
-        );
-      }
-
-      if (found) {
-        setSearchResult(found);
-        setIsNewClient(false);
-        // Cargar mascotas del cliente
-        loadClientPets(found.id);
-      } else {
-        setIsNewClient(true);
-        if (searchType === 'cedula') {
-          setNewClient(prev => ({ ...prev, documentNumber: searchTerm }));
-        }
-      }
-    } catch (err: any) {
-      if (err.response?.status === 401) {
-        setError('No autorizado. Por favor inicie sesión como administrador o veterinario');
-      } else {
-        setError('Error al buscar cliente');
-      }
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
 
   const createClient = async () => {

@@ -41,6 +41,7 @@ const database_1 = require("../config/database");
 const Consent_1 = require("../entities/Consent");
 const ConsentDocumentHistory_1 = require("../entities/ConsentDocumentHistory");
 const errorHandler_1 = require("../middleware/errorHandler");
+const User_1 = require("../entities/User");
 const multer_1 = __importDefault(require("multer"));
 const path = __importStar(require("path"));
 const fs = __importStar(require("fs"));
@@ -238,7 +239,7 @@ class ConsentController {
                 throw new errorHandler_1.AppError(404, 'Consentimiento no encontrado');
             }
             // Verificar que el usuario es el dueño de la mascota
-            if (req.user.role === 'cliente' && consent.pet.ownerId !== req.user.id) {
+            if (req.user.role === User_1.UserRole.CLIENT && consent.pet.ownerId !== req.user.id) {
                 throw new errorHandler_1.AppError(403, 'No tienes permiso para firmar este consentimiento');
             }
             consent.status = Consent_1.ConsentStatus.SIGNED;
@@ -272,7 +273,7 @@ class ConsentController {
                 throw new errorHandler_1.AppError(404, 'Consentimiento no encontrado');
             }
             // Verificar permisos
-            if (req.user.role === 'cliente' && consent.pet.ownerId !== req.user.id) {
+            if (req.user.role === User_1.UserRole.CLIENT && consent.pet.ownerId !== req.user.id) {
                 throw new errorHandler_1.AppError(403, 'No tienes permiso para rechazar este consentimiento');
             }
             consent.status = Consent_1.ConsentStatus.REJECTED;
@@ -301,7 +302,7 @@ class ConsentController {
                 throw new errorHandler_1.AppError(404, 'Consentimiento no encontrado');
             }
             // Verificar permisos
-            if (req.user.role === 'cliente' && consent.pet.ownerId !== req.user.id) {
+            if (req.user.role === User_1.UserRole.CLIENT && consent.pet.ownerId !== req.user.id) {
                 throw new errorHandler_1.AppError(403, 'No tienes permiso para ver este consentimiento');
             }
             res.json({ consent });
@@ -339,7 +340,7 @@ class ConsentController {
                 throw new errorHandler_1.AppError(404, 'Consentimiento no encontrado');
             }
             // Verificar permisos
-            if (req.user.role === 'cliente' && consent.pet.ownerId !== req.user.id) {
+            if (req.user.role === User_1.UserRole.CLIENT && consent.pet.ownerId !== req.user.id) {
                 throw new errorHandler_1.AppError(403, 'No tienes permiso para ver este historial');
             }
             const history = await this.historyRepo.find({
@@ -370,7 +371,7 @@ class ConsentController {
                 throw new errorHandler_1.AppError(404, 'Consentimiento no encontrado');
             }
             // Verificar permisos
-            if (req.user.role === 'cliente' && consent.pet.ownerId !== req.user.id) {
+            if (req.user.role === User_1.UserRole.CLIENT && consent.pet.ownerId !== req.user.id) {
                 throw new errorHandler_1.AppError(403, 'No tienes permiso para actualizar este consentimiento');
             }
             // Marcar documentos anteriores como inactivos

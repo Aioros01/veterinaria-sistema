@@ -78,7 +78,18 @@ class UserController {
         const user = await this.userRepository.findOne({ where: { id: req.params.id } });
         if (!user)
             throw new errorHandler_1.AppError(404, 'User not found');
-        Object.assign(user, req.body);
+        // Si se está actualizando el número de documento, verificar que no exista
+        if (req.body.documentNumber && req.body.documentNumber !== user.documentNumber) {
+            const existingDocument = await this.userRepository.findOne({
+                where: { documentNumber: req.body.documentNumber }
+            });
+            if (existingDocument) {
+                throw new errorHandler_1.AppError(400, 'El número de documento ya está registrado');
+            }
+        }
+        // No permitir cambiar la contraseña por este método
+        const { password, ...updateData } = req.body;
+        Object.assign(user, updateData);
         await this.userRepository.save(user);
         res.json({ message: 'User updated', user });
     }
@@ -93,11 +104,18 @@ class UserController {
     // Crear usuario por admin
     async adminCreateUser(req, res) {
         try {
-            const { email, password, firstName, lastName, role, phone } = req.body;
+            const { email, password, firstName, lastName, role, phone, documentType, documentNumber } = req.body;
             // Verificar si el email ya existe
             const existingUser = await this.userRepository.findOne({ where: { email } });
             if (existingUser) {
                 throw new errorHandler_1.AppError(400, 'El email ya está registrado');
+            }
+            // Verificar si el número de documento ya existe (si se proporciona)
+            if (documentNumber) {
+                const existingDocument = await this.userRepository.findOne({ where: { documentNumber } });
+                if (existingDocument) {
+                    throw new errorHandler_1.AppError(400, 'El número de documento ya está registrado');
+                }
             }
             // Hash de la contraseña
             const hashedPassword = await bcrypt.hash(password, 10);
@@ -109,6 +127,8 @@ class UserController {
                 lastName,
                 role: role || 'client',
                 phone,
+                documentType: documentType || 'cedula',
+                documentNumber,
                 isActive: true
             });
             await this.userRepository.save(user);
