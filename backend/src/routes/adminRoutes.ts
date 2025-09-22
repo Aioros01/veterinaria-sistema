@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { AuthMiddleware } from '../middleware/auth';
+import { AuthMiddleware, AuthRequest } from '../middleware/auth';
 import { AppDataSource } from '../config/database';
 import { User, UserRole } from '../entities/User';
 import { Pet, PetSpecies } from '../entities/Pet';
@@ -11,8 +11,8 @@ import { MedicineSale as Sale } from '../entities/MedicineSale';
 const router = Router();
 
 // Middleware para verificar que el usuario es admin
-const adminMiddleware = async (req: Request, res: Response, next: Function) => {
-  if (req.user?.role !== 'admin') {
+const adminMiddleware = async (req: AuthRequest, res: Response, next: Function) => {
+  if (req.user?.role !== UserRole.ADMIN) {
     return res.status(403).json({ message: 'Acceso denegado. Solo administradores.' });
   }
   next();
