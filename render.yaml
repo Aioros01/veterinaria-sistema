@@ -1,0 +1,37 @@
+services:
+  # Backend API
+  - type: web
+    name: veterinaria-backend
+    runtime: node
+    repo: https://github.com/Aioros01/veterinaria-sistema
+    rootDir: backend
+    buildCommand: npm install && npm run build
+    startCommand: npm run migration:run && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+    healthCheckPath: /api/health
+
+  # Frontend React
+  - type: web
+    name: veterinaria-frontend
+    runtime: static
+    repo: https://github.com/Aioros01/veterinaria-sistema
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://veterinaria-backend.onrender.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
