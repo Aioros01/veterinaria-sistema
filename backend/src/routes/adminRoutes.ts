@@ -61,14 +61,14 @@ router.get('/stats', async (req: Request, res: Response) => {
     res.json({
       users: {
         total: totalUsers,
-        admins: await userRepo.count({ where: { role: 'admin' } }),
-        vets: await userRepo.count({ where: { role: 'veterinarian' } }),
-        clients: await userRepo.count({ where: { role: 'client' } })
+        admins: await userRepo.count({ where: { role: UserRole.ADMIN as any } }),
+        vets: await userRepo.count({ where: { role: UserRole.VETERINARIAN as any } }),
+        clients: await userRepo.count({ where: { role: UserRole.CLIENT as any } })
       },
       pets: {
         total: totalPets,
-        dogs: await petRepo.count({ where: { species: 'dog' } }),
-        cats: await petRepo.count({ where: { species: 'cat' } }),
+        dogs: await petRepo.count({ where: { species: PetSpecies.DOG as any } }),
+        cats: await petRepo.count({ where: { species: PetSpecies.CAT as any } }),
         others: await petRepo
           .createQueryBuilder('pet')
           .where('pet.species NOT IN (:...species)', { species: ['dog', 'cat'] })
@@ -78,7 +78,7 @@ router.get('/stats', async (req: Request, res: Response) => {
         total: totalAppointments,
         pending: pendingAppointments,
         completed: completedAppointments,
-        cancelled: await appointmentRepo.count({ where: { status: 'cancelled' } })
+        cancelled: await appointmentRepo.count({ where: { status: AppointmentStatus.CANCELLED as any } })
       },
       inventory: {
         totalMedications: totalMedications,
