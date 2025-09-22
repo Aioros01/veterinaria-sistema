@@ -5,8 +5,8 @@ import { User, UserRole } from '../entities/User';
 
 export interface AuthRequest extends Request {
   user?: User;
-  file?: Express.Multer.File;
-  files?: Express.Multer.File[] | { [fieldname: string]: Express.Multer.File[] };
+  file?: any;
+  files?: any[] | { [fieldname: string]: any[] };
   body: any;
   params: any;
   query: any;

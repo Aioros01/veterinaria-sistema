@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { AuthMiddleware } from '../middleware/auth';
 import { AppDataSource } from '../config/database';
-import { User } from '../entities/User';
-import { Pet } from '../entities/Pet';
-import { Appointment } from '../entities/Appointment';
+import { User, UserRole } from '../entities/User';
+import { Pet, PetSpecies } from '../entities/Pet';
+import { Appointment, AppointmentStatus } from '../entities/Appointment';
 import { Medicine as Medication } from '../entities/Medicine';
 import { Prescription } from '../entities/Prescription';
 import { MedicineSale as Sale } from '../entities/MedicineSale';
@@ -19,7 +19,7 @@ const adminMiddleware = async (req: Request, res: Response, next: Function) => {
 };
 
 // Aplicar autenticación y verificación de admin a todas las rutas
-router.use(authMiddleware, adminMiddleware);
+router.use(AuthMiddleware.authenticate, adminMiddleware);
 
 // Obtener estadísticas generales del sistema
 router.get('/stats', async (req: Request, res: Response) => {
@@ -41,11 +41,11 @@ router.get('/stats', async (req: Request, res: Response) => {
 
     // Contar por estados
     const pendingAppointments = await appointmentRepo.count({
-      where: { status: 'scheduled' }
+      where: { status: AppointmentStatus.SCHEDULED as any }
     });
 
     const completedAppointments = await appointmentRepo.count({
-      where: { status: 'completed' }
+      where: { status: AppointmentStatus.COMPLETED as any }
     });
 
     // Calcular total de ventas
