@@ -21,6 +21,7 @@ import adminRoutes from './routes/adminRoutes';
 import keepAliveRoutes from './routes/keepAlive';
 import { scheduleCronJobs } from './utils/cronJobs';
 import { backupService } from './services/BackupService';
+import { keepAwakeService } from './utils/keepAwake';
 
 dotenv.config();
 
@@ -80,7 +81,13 @@ export class App {
       await initializeDatabase();
       
       scheduleCronJobs();
-      
+
+      // Iniciar servicio keep-awake solo en producción
+      if (process.env.NODE_ENV === 'production') {
+        keepAwakeService.start();
+        console.log('🔄 Keep-awake service started for production');
+      }
+
       this.app.listen(this.port, () => {
         console.log(`🚀 Server running on http://localhost:${this.port}`);
         console.log(`📱 Health check: http://localhost:${this.port}/health`);

@@ -1,0 +1,1 @@
+{"version":3,"file":"keepAwake.d.ts","sourceRoot":"","sources":["../../src/utils/keepAwake.ts"],"names":[],"mappings":"AAEA,cAAM,gBAAgB;IACpB,OAAO,CAAC,UAAU,CAA+B;IACjD,OAAO,CAAC,OAAO,CAAS;;IAOxB,KAAK,IAAI,IAAI;YAgBC,UAAU;IAqBxB,IAAI,IAAI,IAAI;CAOb;AAED,eAAO,MAAM,gBAAgB,kBAAyB,CAAC"}

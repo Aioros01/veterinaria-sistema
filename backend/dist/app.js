@@ -59,6 +59,7 @@ const medicineSales_1 = __importDefault(require("./routes/medicineSales"));
 const adminRoutes_1 = __importDefault(require("./routes/adminRoutes"));
 const keepAlive_1 = __importDefault(require("./routes/keepAlive"));
 const cronJobs_1 = require("./utils/cronJobs");
+const keepAwake_1 = require("./utils/keepAwake");
 dotenv.config();
 class App {
     constructor() {
@@ -104,6 +105,11 @@ class App {
         try {
             await (0, database_1.initializeDatabase)();
             (0, cronJobs_1.scheduleCronJobs)();
+            // Iniciar servicio keep-awake solo en producción
+            if (process.env.NODE_ENV === 'production') {
+                keepAwake_1.keepAwakeService.start();
+                console.log('🔄 Keep-awake service started for production');
+            }
             this.app.listen(this.port, () => {
                 console.log(`🚀 Server running on http://localhost:${this.port}`);
                 console.log(`📱 Health check: http://localhost:${this.port}/health`);
