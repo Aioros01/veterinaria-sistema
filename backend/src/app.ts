@@ -18,6 +18,7 @@ import hospitalizationRoutes from './routes/hospitalization.routes';
 import consentRoutes from './routes/consent.routes';
 import medicineSalesRoutes from './routes/medicineSales';
 import adminRoutes from './routes/adminRoutes';
+import keepAliveRoutes from './routes/keepAlive';
 import { scheduleCronJobs } from './utils/cronJobs';
 import { backupService } from './services/BackupService';
 
@@ -50,6 +51,9 @@ export class App {
     this.app.get('/health', (req, res) => {
       res.json({ status: 'OK', timestamp: new Date().toISOString() });
     });
+
+    // Keep-alive routes
+    this.app.use('/', keepAliveRoutes);
 
     this.app.use('/api/auth', authRoutes);
     this.app.use('/api/users', userRoutes);

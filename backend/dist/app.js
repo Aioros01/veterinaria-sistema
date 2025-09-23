@@ -57,6 +57,7 @@ const hospitalization_routes_1 = __importDefault(require("./routes/hospitalizati
 const consent_routes_1 = __importDefault(require("./routes/consent.routes"));
 const medicineSales_1 = __importDefault(require("./routes/medicineSales"));
 const adminRoutes_1 = __importDefault(require("./routes/adminRoutes"));
+const keepAlive_1 = __importDefault(require("./routes/keepAlive"));
 const cronJobs_1 = require("./utils/cronJobs");
 dotenv.config();
 class App {
@@ -79,6 +80,8 @@ class App {
         this.app.get('/health', (req, res) => {
             res.json({ status: 'OK', timestamp: new Date().toISOString() });
         });
+        // Keep-alive routes
+        this.app.use('/', keepAlive_1.default);
         this.app.use('/api/auth', auth_routes_1.default);
         this.app.use('/api/users', user_routes_1.default);
         this.app.use('/api/pets', pet_routes_1.default);
