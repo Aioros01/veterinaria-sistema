@@ -13,6 +13,7 @@ import { HospitalizationMedication } from '../entities/HospitalizationMedication
 import { HospitalizationNote } from '../entities/HospitalizationNote';
 import { Consent } from '../entities/Consent';
 import { ConsentDocumentHistory } from '../entities/ConsentDocumentHistory';
+import { AuditLog } from '../entities/AuditLog';
 
 dotenv.config();
 
@@ -36,9 +37,10 @@ const config: DataSourceOptions = {
     HospitalizationMedication,
     HospitalizationNote,
     Consent,
-    ConsentDocumentHistory
+    ConsentDocumentHistory,
+    AuditLog
   ],
-  synchronize: false, // Desactivado porque las tablas ya existen en CockroachDB
+  synchronize: false, // Desactivado después de crear tabla audit_logs
   logging: process.env.NODE_ENV === 'development',
   timeTravelQueries: false // Requerido para CockroachDB
 };

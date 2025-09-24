@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { AuthRequest } from '../middleware/auth';
 export declare class UserController {
     private userRepository;
+    private auditService;
     searchByDocument(req: AuthRequest, res: Response): Promise<void>;
     getProfile(req: AuthRequest, res: Response): Promise<void>;
     updateProfile(req: AuthRequest, res: Response): Promise<void>;
@@ -10,6 +11,7 @@ export declare class UserController {
     updateUser(req: AuthRequest, res: Response): Promise<void>;
     deleteUser(req: AuthRequest, res: Response): Promise<void>;
     adminCreateUser(req: AuthRequest, res: Response): Promise<void>;
+    createClient(req: AuthRequest, res: Response): Promise<void>;
     resetPassword(req: AuthRequest, res: Response): Promise<void>;
     toggleActive(req: AuthRequest, res: Response): Promise<void>;
 }

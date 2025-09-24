@@ -15,11 +15,17 @@ router.get('/', AuthMiddleware.authorize(UserRole.ADMIN, UserRole.VETERINARIAN),
 
 // Rutas de administración (solo admin)
 router.post('/admin-create', AuthMiddleware.authorize(UserRole.ADMIN), asyncHandler(userController.adminCreateUser.bind(userController)));
-router.post('/:id/reset-password', AuthMiddleware.authorize(UserRole.ADMIN), asyncHandler(userController.resetPassword.bind(userController)));
+
+// Ruta para que veterinarios creen clientes (DEBE IR ANTES de /:id)
+router.post('/create-client', AuthMiddleware.authorize(UserRole.ADMIN, UserRole.VETERINARIAN), asyncHandler(userController.createClient.bind(userController)));
+
+// Veterinarios también pueden resetear contraseñas (pero solo de clientes - validado en el controlador)
+router.post('/:id/reset-password', AuthMiddleware.authorize(UserRole.ADMIN, UserRole.VETERINARIAN), asyncHandler(userController.resetPassword.bind(userController)));
 router.patch('/:id/toggle-active', AuthMiddleware.authorize(UserRole.ADMIN), asyncHandler(userController.toggleActive.bind(userController)));
 
 router.get('/:id', AuthMiddleware.authorize(UserRole.ADMIN, UserRole.VETERINARIAN), asyncHandler(userController.getUserById.bind(userController)));
-router.put('/:id', AuthMiddleware.authorize(UserRole.ADMIN), asyncHandler(userController.updateUser.bind(userController)));
+// Permitir que veterinarios también puedan editar usuarios (se registrará en auditoría)
+router.put('/:id', AuthMiddleware.authorize(UserRole.ADMIN, UserRole.VETERINARIAN), asyncHandler(userController.updateUser.bind(userController)));
 router.delete('/:id', AuthMiddleware.authorize(UserRole.ADMIN), asyncHandler(userController.deleteUser.bind(userController)));
 
 export default router;

@@ -49,6 +49,7 @@ const HospitalizationMedication_1 = require("../entities/HospitalizationMedicati
 const HospitalizationNote_1 = require("../entities/HospitalizationNote");
 const Consent_1 = require("../entities/Consent");
 const ConsentDocumentHistory_1 = require("../entities/ConsentDocumentHistory");
+const AuditLog_1 = require("../entities/AuditLog");
 dotenv.config();
 // Configuración para CockroachDB en la nube
 const config = {
@@ -70,9 +71,10 @@ const config = {
         HospitalizationMedication_1.HospitalizationMedication,
         HospitalizationNote_1.HospitalizationNote,
         Consent_1.Consent,
-        ConsentDocumentHistory_1.ConsentDocumentHistory
+        ConsentDocumentHistory_1.ConsentDocumentHistory,
+        AuditLog_1.AuditLog
     ],
-    synchronize: false, // Desactivado porque las tablas ya existen en CockroachDB
+    synchronize: false, // Desactivado después de crear tabla audit_logs
     logging: process.env.NODE_ENV === 'development',
     timeTravelQueries: false // Requerido para CockroachDB
 };

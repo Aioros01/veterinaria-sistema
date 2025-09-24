@@ -37,10 +37,12 @@ exports.UserController = void 0;
 const database_1 = require("../config/database");
 const User_1 = require("../entities/User");
 const errorHandler_1 = require("../middleware/errorHandler");
+const AuditService_1 = require("../services/AuditService");
 const bcrypt = __importStar(require("bcrypt"));
 class UserController {
     constructor() {
         this.userRepository = database_1.AppDataSource.getRepository(User_1.User);
+        this.auditService = AuditService_1.auditService;
     }
     async searchByDocument(req, res) {
         const { documentNumber } = req.params;
@@ -78,6 +80,8 @@ class UserController {
         const user = await this.userRepository.findOne({ where: { id: req.params.id } });
         if (!user)
             throw new errorHandler_1.AppError(404, 'User not found');
+        // Guardar valores anteriores para auditoría
+        const oldValues = { ...user };
         // Si se está actualizando el número de documento, verificar que no exista
         if (req.body.documentNumber && req.body.documentNumber !== user.documentNumber) {
             const existingDocument = await this.userRepository.findOne({
@@ -91,6 +95,8 @@ class UserController {
         const { password, ...updateData } = req.body;
         Object.assign(user, updateData);
         await this.userRepository.save(user);
+        // Registrar en auditoría
+        await AuditService_1.auditService.logUserUpdate(user.id, oldValues, user, req.user, req.ip, req.headers['user-agent']);
         res.json({ message: 'User updated', user });
     }
     async deleteUser(req, res) {
@@ -132,6 +138,8 @@ class UserController {
                 isActive: true
             });
             await this.userRepository.save(user);
+            // Registrar en auditoría
+            await AuditService_1.auditService.logUserCreation(user, req.user, req.ip, req.headers['user-agent']);
             // No devolver la contraseña
             const { password: _, ...userWithoutPassword } = user;
             res.status(201).json({
@@ -144,6 +152,51 @@ class UserController {
             throw error;
         }
     }
+    // Crear cliente por veterinario
+    async createClient(req, res) {
+        try {
+            const { email, password, firstName, lastName, phone, documentType, documentNumber } = req.body;
+            // Verificar si el email ya existe
+            const existingUser = await this.userRepository.findOne({ where: { email } });
+            if (existingUser) {
+                throw new errorHandler_1.AppError(400, 'El email ya está registrado');
+            }
+            // Verificar si el número de documento ya existe
+            if (documentNumber) {
+                const existingDocument = await this.userRepository.findOne({ where: { documentNumber } });
+                if (existingDocument) {
+                    throw new errorHandler_1.AppError(400, 'El número de documento ya está registrado');
+                }
+            }
+            // Hash de la contraseña
+            const hashedPassword = await bcrypt.hash(password, 10);
+            // Crear el usuario - FORZAR ROL CLIENTE
+            const user = this.userRepository.create({
+                email,
+                password: hashedPassword,
+                firstName,
+                lastName,
+                role: User_1.UserRole.CLIENT, // SIEMPRE cliente cuando lo crea un veterinario
+                phone,
+                documentType: documentType || 'cedula',
+                documentNumber,
+                isActive: true
+            });
+            await this.userRepository.save(user);
+            // Registrar en auditoría
+            await AuditService_1.auditService.logUserCreation(user, req.user, req.ip, req.headers['user-agent']);
+            // No devolver la contraseña
+            const { password: _, ...userWithoutPassword } = user;
+            res.status(201).json({
+                message: 'Cliente creado exitosamente',
+                user: userWithoutPassword
+            });
+        }
+        catch (error) {
+            console.error('Error creating client:', error);
+            throw error;
+        }
+    }
     // Restablecer contraseña sin email
     async resetPassword(req, res) {
         try {
@@ -153,10 +206,16 @@ class UserController {
             if (!user) {
                 throw new errorHandler_1.AppError(404, 'Usuario no encontrado');
             }
+            // Si es veterinario, solo puede resetear contraseñas de clientes
+            if (req.user.role === User_1.UserRole.VETERINARIAN && user.role !== User_1.UserRole.CLIENT) {
+                throw new errorHandler_1.AppError(403, 'Los veterinarios solo pueden resetear contraseñas de clientes');
+            }
             // Hash de la nueva contraseña
             const hashedPassword = await bcrypt.hash(newPassword, 10);
             user.password = hashedPassword;
             await this.userRepository.save(user);
+            // Registrar en auditoría
+            await AuditService_1.auditService.logPasswordReset(user, req.user, req.ip, req.headers['user-agent']);
             res.json({
                 message: 'Contraseña restablecida exitosamente',
                 email: user.email
